@@ -11,13 +11,13 @@ from app_run.serializers import RunSerializer, UserSerializer
 @api_view(['GET'])
 def company_details(request):
     details = {"company_name": settings.COMPANY_NAME,
-                     "slogan": settings.SLOGAN,
-                     "contacts": settings.CONTACTS}
+               "slogan": settings.SLOGAN,
+               "contacts": settings.CONTACTS}
     return Response(details)
 
 
 class RunsViewSet(viewsets.ModelViewSet):
-    queryset = Run.objects.all()
+    queryset = Run.objects.select_related("athlete").all()
     serializer_class = RunSerializer
 
 
