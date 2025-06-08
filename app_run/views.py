@@ -45,8 +45,8 @@ class UsersViewSet(viewsets.ReadOnlyModelViewSet):
 class RunStartAPI(APIView):
     def get(self, request, id):
         run = get_object_or_404(Run, id=id)
-        if run.status == 0:
-            run.status = 1
+        if run.status == 'init':
+            run.status = 'in_progress'
             run.save()
             data = {"messege": "Get запрос обработан!"}
             return Response(data, status=status.HTTP_200_OK)
@@ -57,8 +57,8 @@ class RunStartAPI(APIView):
 class RunStopAPI(APIView):
     def get(self, request, id):
         run = get_object_or_404(Run, id=id)
-        if run.status == 1:
-            run.status = 2
+        if run.status == 'in_progress':
+            run.status = 'finished'
             run.save()
             data = {"messege": "Get запрос обработан!"}
             return Response(data, status=status.HTTP_200_OK)

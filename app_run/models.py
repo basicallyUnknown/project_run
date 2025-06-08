@@ -9,5 +9,5 @@ class Run(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     comment = models.TextField()
     athlete = models.ForeignKey(User, on_delete=CASCADE)
-    status = models.IntegerField(choices=[(0, 'init'), (1, 'in_progress'), (2, 'finished')],
-                                 default=0)
+    status = models.CharField(choices=[('init', 'init'), ('in_progress', 'in_progress'), ('finished', 'finished')],
+                                 default='init')
