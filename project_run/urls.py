@@ -30,6 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/company_details/', company_details),
     path('', include(router.urls)),
-    path('api/runs/<int:id>/start', RunStartAPI.as_view()),
-    path('api/runs/<int:id>/stop', RunStopAPI.as_view())
+    path('api/runs/<int:id>/start/', RunStartAPI.as_view()),
+    path('api/runs/<int:id>/stop/', RunStopAPI.as_view())
 ]
