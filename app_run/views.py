@@ -1,8 +1,11 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from django.conf import settings
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
 
 from app_run.models import Run
 from app_run.serializers import RunSerializer, UserSerializer
@@ -37,3 +40,27 @@ class UsersViewSet(viewsets.ReadOnlyModelViewSet):
         elif type == "athlete":
             qs = qs.filter(is_staff=False)
         return qs
+
+
+class RunStartAPI(APIView):
+    def get(self, request, id):
+        run = get_object_or_404(Run, id=id)
+        if run.status == 0:
+            run.status = 1
+            run.save()
+            data = {"messege": "Get запрос обработан!"}
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            raise ValidationError({'messege': 'Get запрос НЕ обработан!'})
+
+
+class RunStopAPI(APIView):
+    def get(self, request, id):
+        run = get_object_or_404(Run, id=id)
+        if run.status == 1:
+            run.status = 2
+            run.save()
+            data = {"messege": "Get запрос обработан!"}
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            raise ValidationError({'messege': 'Get запрос НЕ обработан!'})
