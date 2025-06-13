@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from django.conf import settings
@@ -9,7 +10,16 @@ from rest_framework.views import APIView
 
 from app_run.models import Run
 from app_run.serializers import RunSerializer, UserSerializer
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class RunsPagination(PageNumberPagination):
+    page_size_query_param = 'size'
+
+
+class UsersPagination(PageNumberPagination):
+    page_size_query_param = 'size'
 
 
 @api_view(['GET'])
@@ -23,14 +33,20 @@ def company_details(request):
 class RunsViewSet(viewsets.ModelViewSet):
     queryset = Run.objects.select_related("athlete").all()
     serializer_class = RunSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['status', 'athlete']
+    ordering_fields = ['created_at']
+    pagination_class = RunsPagination
 
 
 class UsersViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
 
-    filter_backends = [SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['first_name', 'last_name']
+    ordering_fields = ['date_joined']
+    pagination_class = UsersPagination
 
     def get_queryset(self):
         qs = self.queryset
